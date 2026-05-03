@@ -1,3 +1,8 @@
+if vim.g.vscode then
+  require 'vscodeinit'
+  return;
+end
+
 --[[
 
 =====================================================================
@@ -297,13 +302,13 @@ require('lazy').setup({
     ---@diagnostic disable-next-line: missing-fields
     opts = {
       signs = {
-        add = { text = '+' }, ---@diagnostic disable-line: missing-fields
-        change = { text = '~' }, ---@diagnostic disable-line: missing-fields
-        delete = { text = '_' }, ---@diagnostic disable-line: missing-fields
-        topdelete = { text = '‾' }, ---@diagnostic disable-line: missing-fields
-        changedelete = { text = '~' }, ---@diagnostic disable-line: missing-fields
+        add = { text = '+', },
+        change = { text = '░' },
+        delete = { text = '▄' },
+        topdelete = { text = '▀' },
+        changedelete = { text = '~' },
       },
-      linehl = true,
+      linehl = false,
     },
   },
 
@@ -321,7 +326,7 @@ require('lazy').setup({
   -- Then, because we use the `opts` key (recommended), the configuration runs
   -- after the plugin has been loaded as `require(MODULE).setup(opts)`.
 
-  { -- Useful plugin to show you pending keybinds.
+  {                     -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
     event = 'VimEnter',
     ---@module 'which-key'
@@ -334,7 +339,7 @@ require('lazy').setup({
 
       -- Document existing key chains
       spec = {
-        { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
+        { '<leader>c', group = '[C]ode',     mode = { 'n', 'x' } },
         { '<leader>s', group = '[S]earch' },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>l', group = '[L]SP' },
@@ -379,7 +384,7 @@ require('lazy').setup({
       { 'nvim-telescope/telescope-ui-select.nvim' },
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
-      { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
+      { 'nvim-tree/nvim-web-devicons',            enabled = vim.g.have_nerd_font },
     },
     config = function()
       -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -427,9 +432,9 @@ require('lazy').setup({
               },
 
               ['<c-n>'] = actions.cycle_history_next,
-              ['<c-K>'] = actions.cycle_history_next,
+              ['<c-s-K>'] = actions.cycle_history_next,
               ['<c-p>'] = actions.cycle_history_prev,
-              ['<c-J>'] = actions.cycle_history_prev,
+              ['<c-s-J>'] = actions.cycle_history_prev,
             },
             n = {
               ['<c-j>'] = {
@@ -550,6 +555,19 @@ require('lazy').setup({
 
   -- LSP Plugins
   {
+    -- `lazydev` configures Lua LSP for your Neovim config, runtime and plugins
+    -- used for completion, annotations and signatures of Neovim apis
+    'folke/lazydev.nvim',
+    ft = 'lua',
+    opts = {
+      library = {
+        -- Load luvit types when the `vim.uv` word is found
+        { path = 'luvit-meta/library', words = { 'vim%.uv' } },
+      },
+    },
+  },
+  { 'Bilal2453/luvit-meta',     lazy = true },
+  {
     -- Main LSP Configuration
     'neovim/nvim-lspconfig',
     dependencies = {
@@ -627,6 +645,7 @@ require('lazy').setup({
 
           -- Find references for the word under your cursor.
           map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+          map('gu', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
 
           -- Jump to the implementation of the word under your cursor.
           --  Useful when your language has ways of declaring types without an actual implementation.
@@ -656,6 +675,7 @@ require('lazy').setup({
           map('<leader>la', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
 
           map('<leader>lf', vim.lsp.buf.format, '[L]sp [F]ormat')
+          map('<leader>le', vim.lsp.buf.format, '[L]sp [F]ormat')
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
@@ -694,7 +714,7 @@ require('lazy').setup({
           -- code, if the language server you are using supports them
           --
           -- This may be unwanted, since they displace some of your code
-          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
+          if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
             map('<leader>lth', function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
             end, '[T]oggle Inlay [H]ints')
@@ -828,6 +848,9 @@ require('lazy').setup({
       -- You can also specify external formatters in here.
       formatters_by_ft = {
         -- rust = { 'rustfmt' },
+        lua = { 'stylua' },
+        c = { 'clang-format' },
+        cpp = { 'clang-format' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -935,7 +958,7 @@ require('lazy').setup({
               luasnip.expand_or_jump()
             end
           end, { 'i', 's' }),
-          ['<C-Y>'] = cmp.mapping(function()
+          ['<C-s-y>'] = cmp.mapping(function()
             if luasnip.locally_jumpable(-1) then
               luasnip.jump(-1)
             end
@@ -1049,9 +1072,9 @@ require('lazy').setup({
 
       if vim.g.neovide then
       else
-        vim.keymap.set('n', '<C-_>', function ()
+        vim.keymap.set('n', '<C-_>', function()
           local cursor = vim.api.nvim_win_get_cursor(0)
-          MC.toggle_lines(cursor[1], cursor[1], { ref_position = {cursor[1], cursor[2] + 1} })
+          MC.toggle_lines(cursor[1], cursor[1], { ref_position = { cursor[1], cursor[2] + 1 } })
           vim.api.nvim_input 'j'
         end)
       end
@@ -1075,11 +1098,27 @@ require('lazy').setup({
   },
 
   { -- Highlight, edit, and navigate code
+    
     'nvim-treesitter/nvim-treesitter',
     lazy = false,
     build = ':TSUpdate',
     branch = 'main',
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter-intro`
+    --[[
+    opts = {
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      -- Autoinstall languages that are not installed
+      auto_install = true,
+      highlight = {
+        enable = true,
+        -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
+        --  If you are experiencing weird indenting issues, add the language to
+        --  the list of additional_vim_regex_highlighting and disabled languages for indent.
+        additional_vim_regex_highlighting = { 'ruby' },
+      },
+      indent = { enable = true, disable = { 'ruby' } },
+    },
+    ]]--
     config = function()
       -- ensure basic parser are installed
       local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }

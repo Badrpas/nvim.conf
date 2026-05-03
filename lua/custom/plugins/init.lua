@@ -6,6 +6,9 @@
 ---@module 'lazy'
 ---@type LazySpec
 return {
+    { "mason-org/mason.nvim", version = "^1.0.0" },
+    { "mason-org/mason-lspconfig.nvim", version = "^1.0.0" },
+
     { 'akinsho/toggleterm.nvim', version = '*', config = true },
     {
         'nvim-neo-tree/neo-tree.nvim',
