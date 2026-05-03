@@ -54,17 +54,19 @@ else
   --map("v", "<C-?>", "<esc><cmd> :lua require('Comment.api').toggle_blockwise_op(vim.fn.visualmode())<CR>")
 end
 
+map("n", "<leader>c", "gccj")
 
 -- Wrap in quotes
 -- map('v', "'", "c''<C-[>P");
 
 -- move line with proper tabbing
-map("n", "<a-j>", '$v^d"_ddoa<C-[>p^"_x')
-map("n", "<a-k>", '$v^d"_ddkOa<C-[>p^"_x')
+map("n", "<c-a-j>", '$v^d"_ddoa<C-[>p^"_x')
+map("n", "<c-a-k>", '$v^d"_ddkOa<C-[>p^"_x')
 
 -- tree
 map("n", "<a-1>", '<CMD>Neotree toggle<CR>')
-map("n", "<a-w>", "<CMD>Neotree reveal<CR>")
+-- map("n", "<a-w>", "<CMD>Neotree reveal<CR>")
+map("n", "<a-w>", "<CMD>bd<CR>")
 map("n", "<leader>e", "<CMD>Neotree reveal<CR>")
 
 
@@ -78,9 +80,23 @@ map("n", "<C-w>", function ()
     -- cmd_async('<CMD>:Neotree reveal<CR>')
   end
 end)
-map("i", "<C-w>", "<C-[><C-w>:bd<CR>")
+-- map("i", "<C-w>", "<C-[><C-w>:bd<CR>")
 
--- poor man's insert
+-- INPUT NAVIGATION IN EDIT MODE
+map("i", "<C-w>", "<C-[>wi")
+map('i', "<C-e>", "<C-[>ea")
+map("i", "<C-b>", "<C-[>bi")
+
+map('i', "<C-k>", "<Up>")
+map('i', "<C-j>", "<Down>")
+map('i', "<C-h>", "<Left>")
+map('i', "<C-l>", "<Right>")
+
+
+
+
+
+-- poor man's paste
 map("n", "<C-v>", "<C-[>P")
 map("i", "<C-v>", "<C-[>p")
 map("t", "<C-v>", "<C-[>p")
@@ -128,9 +144,8 @@ map({ "n" }, "<leader>;w", "<cmd>w<CR>")
 -- map({ "i" }, ":w<CR>", "<cmd>w<CR>")
 
 map({ "n" }, "<C-[>", "<C-[>:w<CR>");
+map({ "n" }, "<Esc>", "<C-[>:w<CR>");
 
-
-map("n", "<leader>r", "<cmd>ToggleTerm direction=float<cr><C-c><CR><UP><CR><cmd>ToggleTerm<cr>")
 
 -- map("i", "<C-q>", "<C-[>mmF(<C-q>")
 
@@ -207,7 +222,7 @@ map('', '<C-q>', function() vim.lsp.buf.signature_help() end)
   -- vim.api.nvim_feedkeys(keys, 'm', false)
   -- vim.lsp.buf.signature_help()
 -- end)
-map('i', '<C-q>', function() 
+map('i', '<C-q>', function()
   vim.lsp.buf.hover()
 end)
 map('', '<M-CR>', function() vim.lsp.buf.code_action() end)
@@ -220,9 +235,6 @@ map('n', "<a-,>", function() vim.diagnostic.goto_prev() end)
 -- wrap selection
 
 
-
-map('i', "<C-k>", "<Right>")
-map('i', "<C-j>", "<Left>")
 
 -- New file
 map({ 'n', 'i' }, '<a-n>', function()
@@ -250,6 +262,9 @@ map({ 'n', 'v', 'i' }, '<M-Space>', '<C-[><cmd>ToggleTerm direction=float<cr>')
 map('t', "<M-Space>", "<cmd>ToggleTerm<cr>")
 map('t', "<C-Space>", "<cmd>ToggleTerm<cr>")
 map('t', "<Esc>", "<C-\\><C-n><C-w>k")
+
+-- map("n", "<leader>r", "<cmd>ToggleTerm direction=float<cr><C-c><CR><UP><CR><cmd>ToggleTerm<cr>")
+map("n", "<leader>r", '<cmd>TermExec cmd="<C-c>"<CR><UP><CR>')
 
 
 return M
