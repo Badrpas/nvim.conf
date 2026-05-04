@@ -217,9 +217,20 @@ map('', '<M-CR>', function() vim.lsp.buf.code_action() end)
 map('n', 'gi', function() vim.lsp.buf.implementation() end)
 
 -- diagnostics
-map('n', "<a-.>", function() vim.diagnostic.goto_next() end)
-map('n', "<a-,>", function() vim.diagnostic.goto_prev() end)
-
+map('n', "<a-.>", function() 
+  local x = vim.diagnostic.get_next()
+  if not x then return end
+  vim.diagnostic.jump({
+    diagnostic = x
+  })
+end)
+map('n', "<a-,>", function()
+  local x = vim.diagnostic.get_prev()
+  if not x then return end
+  vim.diagnostic.jump({
+    diagnostic = x
+  })
+end)
 -- wrap selection
 
 
@@ -254,6 +265,7 @@ map('t', "<Esc>", "<C-\\><C-n><C-w>k")
 -- map("n", "<leader>r", "<cmd>ToggleTerm direction=float<cr><C-c><CR><UP><CR><cmd>ToggleTerm<cr>")
 map("n", "<leader>r", '<cmd>TermExec cmd="<C-c>"<CR><UP><CR>')
 
+map("n", "<leader>pm", '<cmd>Mason<CR>')
 
 return M
 
